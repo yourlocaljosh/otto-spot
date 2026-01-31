@@ -26,9 +26,9 @@ while True:
     
     bottom_zone_y = int(frame_height * 0.4)
     cv2.line(frame, (0, bottom_zone_y), (frame.shape[1], bottom_zone_y), 
-            (255, 255, 0), 2)
+            (0, 255, 255), 3)
     cv2.putText(frame, "Rep area", (10, bottom_zone_y - 10),
-               cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
+               cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
     
     y_pos, distance, coords = detect_barbell_markers(frame)
     
