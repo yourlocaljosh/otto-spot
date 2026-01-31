@@ -27,8 +27,8 @@ def pick_color(event, x, y, flags, param):
             print(f"Cumulative #{len(samples)}")
             print(f"AVG: H={avg_h}, S={avg_s}, V={avg_v}")
             print(f"{min_h} to {max_h}")
-            print(f"lower_red = np.array([{max(0, min_h-15)}, {max(30, avg_s-80)}, {max(30, avg_v-80)}])")
-            print(f"upper_red = np.array([{min(180, max_h+15)}, 255, 255])\n")
+            print(f"lower = np.array([{max(0, min_h-15)}, {max(30, avg_s-80)}, {max(30, avg_v-80)}])")
+            print(f"upper = np.array([{min(180, max_h+15)}, 255, 255])\n")
 
 cap = cv2.VideoCapture(0)
 
