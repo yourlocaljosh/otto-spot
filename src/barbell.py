@@ -48,7 +48,8 @@ def detect_barbell_markers(frame):
 # Main loop
 cap = cv2.VideoCapture(0)
 
-while True:
+#Comment out while connected to main loop
+"""while True:
     ret, frame = cap.read()
     if not ret:
         break
@@ -68,6 +69,7 @@ while True:
     
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
+    """
 
 cap.release()
 cv2.destroyAllWindows()
