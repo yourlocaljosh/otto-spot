@@ -7,7 +7,6 @@ UPPER_MARKER = np.array([10, 255, 255])
 
 def detect_barbell_marker(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    
     mask = cv2.inRange(hsv, LOWER_MARKER, UPPER_MARKER)
     
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, 
@@ -16,18 +15,27 @@ def detect_barbell_marker(frame):
     if contours:
         largest = max(contours, key=cv2.contourArea)
         
-        if cv2.contourArea(largest) > 100:
+        if cv2.contourArea(largest) > 500:
             x, y, w, h = cv2.boundingRect(largest)
             
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+            # Horizontal line (bar)
+            aspect_ratio = w / h
             
-            center_y = y + h // 2
-            
-            #Draw line at barbell
-            cv2.line(frame, (0, center_y), (frame.shape[1], center_y), 
-                    (0, 255, 0), 1)
-            
-            return center_y
+            # 3:1 ratio (length to height)
+            if aspect_ratio > 3:
+                # Draw rectangle around detected marker
+                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+                
+                center_y = y + h // 2
+                
+                cv2.line(frame, (0, center_y), (frame.shape[1], center_y), 
+                        (0, 255, 0), 1)
+                
+                return center_y
+            else:
+                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 1)
+                cv2.putText(frame, f"Ratio: {aspect_ratio:.1f}", (x, y-10),
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
     
     return None
 
