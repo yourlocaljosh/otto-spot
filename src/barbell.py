@@ -2,8 +2,8 @@ import cv2
 import numpy as np
 
 # Barbell color marking
-LOWER_MARKER = np.array([100, 100, 100])
-UPPER_MARKER = np.array([130, 255, 255])
+LOWER_MARKER = np.array([0, 150, 70])
+UPPER_MARKER = np.array([10, 255, 255])
 
 def detect_barbell_marker(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
