@@ -24,7 +24,7 @@ while True:
     if not ret:
         break
     
-    bottom_zone_y = int(frame_height * 0.4)
+    bottom_zone_y = int(frame_height * 0.75)
     cv2.line(frame, (0, bottom_zone_y), (frame.shape[1], bottom_zone_y), 
             (0, 255, 255), 3)
     cv2.putText(frame, "Rep area", (10, bottom_zone_y - 10),
@@ -51,7 +51,7 @@ while True:
                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
     
     if assist_needed:
-        cv2.putText(frame, "Spot condition detected", (10, 200),
+        cv2.putText(frame, "Spot needed", (10, 200),
                 cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 4)
     
     cv2.imshow('Otto Spot', frame)
