@@ -1,0 +1,64 @@
+import cv2
+import sys
+sys.path.append('src')
+
+from barbell import detect_barbell_markers
+from spot_detection import SpotDetector
+
+cap = cv2.VideoCapture(0)
+
+ret, test_frame = cap.read()
+if not ret:
+    print("Error: Cannot open camera")
+    exit()
+
+frame_height = test_frame.shape[0]
+spot_detector = SpotDetector(frame_height)
+
+print("Otto Spot - Running")
+print(f"Frame height: {frame_height}")
+print(f"Bottom zone threshold: {spot_detector.frame_height * 0.4}")
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+    
+    bottom_zone_y = int(frame_height * 0.4)
+    cv2.line(frame, (0, bottom_zone_y), (frame.shape[1], bottom_zone_y), 
+            (255, 255, 0), 2)
+    cv2.putText(frame, "Rep area", (10, bottom_zone_y - 10),
+               cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
+    
+    y_pos, distance, coords = detect_barbell_markers(frame)
+    
+    assist_needed = spot_detector.is_stuck(y_pos)
+    stuck_duration = spot_detector.get_stuck_duration()
+    
+    # Display barbell info
+    if y_pos is not None:
+        cv2.putText(frame, f"Barbell Y: {y_pos}", (10, 30),
+                   cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.putText(frame, f"Length: {int(distance)}px", (10, 70),
+                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+        
+        # Show stuck timer if counting
+        if stuck_duration > 0:
+            cv2.putText(frame, f"Stuck: {stuck_duration:.1f}s", (10, 110),
+                       cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 165, 0), 2)
+    else:
+        cv2.putText(frame, "No marker detected", (10, 30),
+                   cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+    
+    if assist_needed:
+        cv2.putText(frame, "Spot condition detected", (10, 200),
+                cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 4)
+    
+    cv2.imshow('Otto Spot', frame)
+    
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+print("\nTerminated")
