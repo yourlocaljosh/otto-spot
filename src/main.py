@@ -3,7 +3,7 @@ import sys
 sys.path.append('src')
 
 from barbell import detect_barbell_markers
-from spot_detection import SpotDetector
+from spot_detection import SpotDetector, BOTTOM_ZONE_THRESHOLD
 
 cap = cv2.VideoCapture(0)
 
@@ -15,16 +15,17 @@ if not ret:
 frame_height = test_frame.shape[0]
 spot_detector = SpotDetector(frame_height)
 
+assist_active = False
+
 print("Otto Spot - Running")
 print(f"Frame height: {frame_height}")
-print(f"Bottom zone threshold: {spot_detector.frame_height * 0.75}")
 
 while True:
     ret, frame = cap.read()
     if not ret:
         break
     
-    bottom_zone_y = int(frame_height * 0.75)
+    bottom_zone_y = int(frame_height * BOTTOM_ZONE_THRESHOLD)
     cv2.line(frame, (0, bottom_zone_y), (frame.shape[1], bottom_zone_y), 
             (0, 255, 255), 3)
     cv2.putText(frame, "Rep area", (10, bottom_zone_y - 10),
