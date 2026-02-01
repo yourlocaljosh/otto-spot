@@ -1,0 +1,5 @@
+For developmental use:
+    - Download Python (3.12.* or above) and setup virtual environment (and activate)
+    - pip install -r requirements.txt
+    - Use one of our shell scripts for convenience
+    
