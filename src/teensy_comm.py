@@ -36,23 +36,30 @@ class TeensyController:
     def spot_trigger(self):
         if self.connected and self.serial:
             try:
-                self.serial.write(b'SPOT\n')
+                self.serial.write(b'1')#SPOT
                 self.serial.flush()
-                print("Spot trigger to Teensy")
+                print("→ Motor ASSIST (pulling up)")
                 return True
             except Exception as e:
                 print(f"Spot trigger error {e}")
                 return False
         else:
-            print("Would send trigger but no motor mode")
+            print("Would send ASSIST but no motor mode")
             return False
-    
+
     def spot_terminate(self):
         if self.connected and self.serial:
             try:
-                self.serial.write(b'STOP\n')
+                self.serial.write(b'2')#RELEASE
                 self.serial.flush()
-                print("Terminate spot")
+                print("→ Motor RELEASE (giving slack)")
+                
+                time.sleep(1)
+                
+                # Then stop
+                self.serial.write(b'0')#STOP
+                self.serial.flush()
+                print("→ Motor STOP (ready)")
                 return True
             except Exception as e:
                 print(f"Terminating spot error {e}")
