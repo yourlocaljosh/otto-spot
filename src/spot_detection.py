@@ -40,7 +40,6 @@ class SpotDetector:
             stuck_duration = time.time() - self.stuck_start_time
             
             if stuck_duration >= STUCK_THRESHOLD:
-                print("Detected spot condition")
                 return True
         else:
             self.stuck_start_time = None
