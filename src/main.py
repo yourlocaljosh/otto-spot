@@ -17,7 +17,7 @@ spot_detector = SpotDetector(frame_height)
 
 print("Otto Spot - Running")
 print(f"Frame height: {frame_height}")
-print(f"Bottom zone threshold: {spot_detector.frame_height * 0.4}")
+print(f"Bottom zone threshold: {spot_detector.frame_height * 0.75}")
 
 while True:
     ret, frame = cap.read()
