@@ -3,7 +3,7 @@ import sys
 sys.path.append('src')
 
 from barbell import detect_barbell_markers
-from spot_detection import SpotDetector, BOTTOM_ZONE_THRESHOLD
+from spot_detection import SpotDetector, BOTTOM_ZONE_THRESHOLD, CLEAR_ZONE_THRESHOLD
 from teensy_comm import TeensyController
 
 cap = cv2.VideoCapture(0)
@@ -30,14 +30,22 @@ try:
             break
         
         bottom_zone_y = int(frame_height * BOTTOM_ZONE_THRESHOLD)
+        clear_zone_y = int(frame_height * CLEAR_ZONE_THRESHOLD)
+
         cv2.line(frame, (0, bottom_zone_y), (frame.shape[1], bottom_zone_y), 
                 (0, 255, 255), 3)
-        cv2.putText(frame, "Rep area", (10, bottom_zone_y - 10),
+        cv2.putText(frame, "Rep threshold", (10, bottom_zone_y - 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+        
+        cv2.line(frame, (0, clear_zone_y), (frame.shape[1], clear_zone_y), 
+                (0, 255, 0), 3)
+        cv2.putText(frame, "Termination threshold", (10, clear_zone_y - 10),
+                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
         
         y_pos, distance, coords = detect_barbell_markers(frame)
         
         assist_needed = spot_detector.is_stuck(y_pos)
+        is_clear = spot_detector.is_clear(y_pos)
         stuck_duration = spot_detector.get_stuck_duration()
 
         if assist_needed and not assist_active:
@@ -45,7 +53,7 @@ try:
             print("Spot triggered")
             teensy.spot_trigger()
             assist_active = True
-        elif not assist_needed and assist_active:
+        elif not assist_needed and is_clear:
             print("Spot in progress")
             #Send stop to Teensy
             teensy.spot_terminate()
@@ -67,7 +75,7 @@ try:
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
         
         if assist_needed:
-            cv2.putText(frame, "Spot needed", (10, 200),
+            cv2.putText(frame, "Spot Active", (10, 200),
                     cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 4)
             
         status_color = (0, 255, 0) if teensy.connected else (0, 0, 255)
