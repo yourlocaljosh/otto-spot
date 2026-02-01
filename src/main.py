@@ -19,6 +19,10 @@ spot_detector = SpotDetector(frame_height)
 teensy = TeensyController()
 
 assist_active = False
+rep_count = 0
+best_set = 0
+in_rep_zone = False
+rep_completed = False
 
 print("Otto Spot - Running")
 print(f"Frame height: {frame_height}")
@@ -48,6 +52,23 @@ try:
         is_clear = spot_detector.is_clear(y_pos)
         stuck_duration = spot_detector.get_stuck_duration()
 
+        if y_pos is not None:
+            if y_pos > bottom_zone_y and not in_rep_zone:
+                in_rep_zone = True
+                rep_completed = False
+            
+            if in_rep_zone and not rep_completed and is_clear:
+                rep_count += 1
+                rep_completed = True
+                
+                # Check if target reached
+                if rep_count >= best_set:
+                    best_set = rep_count
+            
+            if y_pos < clear_zone_y:
+                in_rep_zone = False
+
+
         if assist_needed and not assist_active:
             print("Spot triggered")
             teensy.spot_trigger()
@@ -73,6 +94,18 @@ try:
         else:
             cv2.putText(frame, "No marker detected", (10, 30),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            
+        rep_text = f"Reps: {rep_count} Best Set: {best_set}"
+        text_size = cv2.getTextSize(rep_text, cv2.FONT_HERSHEY_SIMPLEX, 1.5, 3)[0]
+        text_x = frame.shape[1] - text_size[0] - 20
+        
+        # Background box for rep counter
+        cv2.rectangle(frame, (text_x - 10, 10), 
+                     (frame.shape[1] - 10, 70), (0, 0, 0), -1)
+        
+        rep_color = (0, 215, 255)
+        cv2.putText(frame, rep_text, (text_x, 50),
+                   cv2.FONT_HERSHEY_SIMPLEX, 1.5, rep_color, 3)
         
         if assist_needed:
             cv2.putText(frame, "Spot Active", (10, 200),
