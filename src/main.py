@@ -49,14 +49,14 @@ try:
         stuck_duration = spot_detector.get_stuck_duration()
 
         if assist_needed and not assist_active:
-            #Send spot trigger to Teensy
             print("Spot triggered")
             teensy.spot_trigger()
             assist_active = True
-        elif not assist_needed and is_clear:
-            print("Spot in progress")
-            #Send stop to Teensy
+        
+        elif assist_active and is_clear:
+            print("Termination triggered")
             teensy.spot_terminate()
+            spot_detector.clear_assist()
             assist_active = False
         
         # Display barbell info
