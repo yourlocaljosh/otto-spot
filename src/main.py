@@ -35,6 +35,15 @@ while True:
     
     assist_needed = spot_detector.is_stuck(y_pos)
     stuck_duration = spot_detector.get_stuck_duration()
+
+    if assist_needed and not assist_active:
+        #Send spot trigger to Teensy
+        print("Spot triggered")
+        assist_active = True
+    elif not assist_needed and assist_active:
+        print("Spot in progress")
+        #Send stop to Teensy
+        assist_active = False
     
     # Display barbell info
     if y_pos is not None:
