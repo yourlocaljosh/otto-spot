@@ -5,6 +5,7 @@ import time
 # Spot detection parameters
 STUCK_THRESHOLD = 3.0
 BOTTOM_ZONE_THRESHOLD = 0.75
+CLEAR_ZONE_THRESHOLD = 0.50
 
 class SpotDetector:
     def __init__(self, frame_height):
@@ -12,11 +13,12 @@ class SpotDetector:
         self.stuck_start_time = None
         self.last_y = None
         self.positions = []
+        self.assist_triggered = False
         
     def is_stuck(self, y_pos):
         if y_pos is None:
             self.stuck_start_time = None
-            return False
+            return self.assist_triggered
         
         # Track position history
         self.positions.append(y_pos)
@@ -40,11 +42,23 @@ class SpotDetector:
             stuck_duration = time.time() - self.stuck_start_time
             
             if stuck_duration >= STUCK_THRESHOLD:
+                self.assist_triggered = True
                 return True
         else:
             self.stuck_start_time = None
         
-        return False
+        return self.assist_triggered
+    
+    def is_clear(self, y_pos):
+        if y_pos is None:
+            return False
+        
+        clear_zone_y = self.frame_height * CLEAR_ZONE_THRESHOLD
+        return y_pos < clear_zone_y
+    
+    def clear_assist(self):
+        self.assist_triggered = False
+        self.stuck_start_time = None
     
     def get_stuck_duration(self):
         if self.stuck_start_time is None:
