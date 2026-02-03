@@ -5,7 +5,7 @@ import time
 # Spot detection parameters
 STUCK_THRESHOLD = 3.0
 BOTTOM_ZONE_THRESHOLD = 0.75
-CLEAR_ZONE_THRESHOLD = 0.50
+CLEAR_ZONE_THRESHOLD = 0.40
 
 class SpotDetector:
     def __init__(self, frame_height):
