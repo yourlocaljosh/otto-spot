@@ -4,4 +4,4 @@ Fully autonomous bench press spotting system. Using computer vision algorithms t
 # The Team
 Made by Seungwon (Josh) Hong, Bharatraj Elavarasan, Hitesh Tirumalasetti.
 
-Won 2nd place overall at SpartaHack 11, February 1st 2026
+Awarded 2nd Place overall at SpartaHack 11, February 1st 2026
